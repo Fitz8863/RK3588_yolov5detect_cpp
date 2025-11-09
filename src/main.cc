@@ -133,7 +133,7 @@ int main(int argc, char** argv)
         capture.open(pipeline, cv::CAP_GSTREAMER);
 
         // 如果没有GStreamer环境的话使用下面这个
-        capture.open(std::string(video_name));
+        // capture.open(std::string(video_name));
  
     }
     else
