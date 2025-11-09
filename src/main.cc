@@ -36,7 +36,7 @@ void capture_thread(cv::VideoCapture& capture, rknnPool<rkYolov5s, cv::Mat, All_
 void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum)
 {
 #ifdef USE_RTSP
-        int width = 1280;
+    int width = 1280;
     int height = 720;
     int fps = 60;
 
@@ -75,6 +75,9 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
                 break;
             }
 #endif 
+            // 打印识别到的结果，count是当前每一帧图的目标方框数量，result是对应是这些方框的信息
+            // std::std::cout << result.result_box.count << std::endl;
+            // std::std::cout << result.result_box.results << std::endl;
         }
     }
 

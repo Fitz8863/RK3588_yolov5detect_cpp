@@ -1,41 +1,103 @@
-# 简介
-* 此仓库为c++实现, 大体改自[rknpu2](https://github.com/rockchip-linux/rknpu2), python快速部署见于[rknn-multi-threaded](https://github.com/leafqycc/rknn-multi-threaded)
-* 使用[线程池](https://github.com/senlinzhan/dpool)异步操作rknn模型, 提高rk3588/rk3588s的NPU使用率, 进而提高推理帧数
-* [yolov5s](https://github.com/rockchip-linux/rknpu2/tree/master/examples/rknn_yolov5_demo/model/RK3588)使用relu激活函数进行优化,提高推理帧率
+# RK3588实现线程池推理yolov5(C++版本)
 
-# 更新说明
-* 修复了cmake找不到pthread的问题
-* 新增nosigmoid分支,使用[rknn_model_zoo](https://github.com/airockchip/rknn_model_zoo/tree/main/models)下的模型以达到极限性能提升
-* 将RK3588 NPU SDK 更新至官方主线1.5.0, [yolov5s-silu](https://github.com/rockchip-linux/rknn-toolkit2/tree/v1.4.0/examples/onnx/yolov5)将沿用1.4.0的旧版本模型, [yolov5s-relu](https://github.com/rockchip-linux/rknpu2/tree/master/examples/rknn_yolov5_demo/model/RK3588)更新至1.5.0版本, 弃用nosigmoid分支。
-* 新增v1.5.0分支(向下兼容1.4.0), main分支更新至v1.5.2, 修改了项目结构, 将rknn模型线程池封装成类(include/rknnPool.hpp)
+这里提供了C++版本的yolov5线程池推理的代码，
 
-# 使用说明
-### 演示
-  * 系统需安装有**OpenCV**
-  * 下载Releases中的测试视频于项目根目录,运行build-linux_RK3588.sh
-  * 可切换至root用户运行performance.sh定频提高性能和稳定性
-  * 编译完成后进入install运行命令./rknn_yolov5_demo **模型所在路径** **视频所在路径/摄像头序号**
+## 环境说明
 
-### 部署应用
-  * 参考include/rkYolov5s.hpp中的rkYolov5s类构建rknn模型类
+### PC端（模型量化）
 
-# 多线程模型帧率测试
-* 使用performance.sh进行CPU/NPU定频尽量减少误差
-* 测试模型来源: 
-* [yolov5s-relu](https://github.com/rockchip-linux/rknpu2/tree/master/examples/rknn_yolov5_demo/model/RK3588)
-* 测试视频可见于 [bilibili](https://www.bilibili.com/video/BV1zo4y1x7aE/?spm_id_from=333.999.0.0)
+Python版本：conda环境，Python 3.10.16
 
-|  模型\线程数   | 1    |  2   | 3  |  4  | 5  | 6  | 9  | 12  |
-|  ----  | ----  |  ----  | ----  |  ----  | ----  | ----  | ----  | ----  |
-| Yolov5s - relu  | 41.6044 | 71.6037 | 98.6057 | 98.0068 | 104.6001 | 114.7454 | 129.5693 | 140.8788 |
+rknn-toolkit2版本：Version: 2.0.0b0+9bab5682rknn-toolkit2版本：Version: 2.0.0b0 9bab5682
 
-# 补充
-* 异常处理尚未完善, 目前仅支持rk3588/rk3588s下的运行
+```bash
+# 可以通过这个指令查看
+pip3 show rknn-toolkit2
+```
 
-# Acknowledgements
-* https://github.com/rockchip-linux/rknpu2
-* https://github.com/senlinzhan/dpool
-* https://github.com/ultralytics/yolov5
-* https://github.com/airockchip/rknn_model_zoo
+### 香橙派rk3588端
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/orangepi/projects/rknn-cpp-thread/lib
+Python版本：Python 3.10.12
+
+NPU版本：RKNPU driver: v0.9.6（0.9.6版本的都兼容）
+
+```bash
+# 可通过下面这个查看
+sudo cat /sys/kernel/debug/rknpu/version
+```
+
+rknn-toolkit-lite2：Version: 1.6.0
+
+```bash
+# 可以通过下面这个指令查看
+pip3 show rknn-toolkit-lite2
+```
+
+
+
+## 运行案例
+
+拉取仓库代码：
+
+```bash
+git clone https://github.com/Fitz8863/RK3588_yolov5detect_cpp.git
+```
+
+```bash
+cd RK3588_yolov5detect_cpp
+```
+
+然后创建进入build目录
+
+```bash
+mkdir -p build && cd build
+```
+
+在build目录下执行cake
+
+```bash
+cmake ..
+```
+
+然后再执行make
+
+```
+make
+```
+
+可以看到生成了rknn_yolov5_demo 这个可执行程序，但是在此之前要执行下面这个语句，把库环境导入到当前终端中（注意，下面那个path改用你的绝对路径）
+
+```bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(find /path/RK3588_yolov5detect_cpp/lib -type d | tr '\n' ':')
+```
+
+然后再执行案例（如果想使用摄像头，把../video/spiderman.mp4改成 /dev/video0 即可，根据你摄像头描述符号去改）
+
+```bash
+./rknn_yolov5_demo ../model/yolov5s-640-640.rknn ../video/spiderman.mp4
+```
+
+
+
+## 补充说明
+
+### 1、识别的类别
+
+这里有一个文本，这个文本是表示要识别的类别，如果你要去推理你自己的模型的话，记得修改一下这个文本里面的内容
+
+![image-20251109155556062](README_img/image-20251109155556062.png)
+
+### 2、关于推流和ffmpeg
+
+可以看到main.cc主文件的这里，这里有一个编译宏，默认注释掉是表示不使用推流，使用直接在显示屏显示推理后的视频；如果解开注释的话就表示使用推流的形式。
+
+![image-20251109162237388](README_img/image-20251109162237388.png)
+
+下面这里是推流的指令，我是使用ffmpeg去推流的，这里需要设置推流的分辨率和帧率这些参数，这里你根据实际情况去设置就行了。还有就是 -c:v h264_rkmpp 这里是指定推流使用的H264流编码器 ，我这里指定是使用硬件编码也就是rk3588的 h264_rkmpp 编码器，如果你的设备不支持这个那请你把 h264_rkmpp 改成 libx264 就行了，这个是使用cpu默认编码。
+
+![image-20251109162435981](README_img/image-20251109162435981.png)
+
+这里我强烈建议你使用硬件编码去实现推流的操作。因为程序模型推理是属于非常吃开发板性能的，CPU软件编码本身就是很容易导致程序崩溃，具体教程可参考下面博客
+
+> [rk3588 ffmpeg硬编码安装_rk3588 ffmpeg硬解码-CSDN博客](https://blog.csdn.net/qq_59164231/article/details/143510535)
+
