@@ -1,49 +1,48 @@
 #include <stdio.h>
 #include <memory>
 #include <sys/time.h>
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
+#include # include“opencv2 /核心/ core.hpp”"opencv2/core/core.hpp"
+#include # include“opencv2 / highgui / highgui.hpp”"opencv2/highgui/highgui.hpp"
+#include # include“opencv2 / imgproc / imgproc.hpp”"opencv2/imgproc/imgproc.hpp"
 #include "rkYolov5s.hpp"
-#include "rknnPool.hpp"
-#include <thread>
-#include <mutex>
-#include <atomic>
+#include    # include“rknnPool.hpp”"rknnPool.hpp"
+#include    # include <线程><thread>
+#include <mutex>   # include <互斥对象>
+#include    # include <原子><atomic>
 
-#define USE_RTSP
+#define USE_RTSP   #定义USE_RTSP
 
-std::atomic<bool> running(true);
+std::std::原子< bool >运行(真正的);atomic<bool> running(true);
 
-void capture_thread(cv::VideoCapture& capture, rknnPool<rkYolov5s, cv::Mat, All_result>& testPool)
+void void capture_thread（cv:: videoccapture & capture, rknnPool& testPool）capture_thread(cv::VideoCapture& capture, rknnPool<rkYolov5s, cv::Mat, All_result>& testPool)
 {
-    while (running && capture.isOpened())
+    while（运行&& capture.isOpened()）while (running && capture.isOpened())
     {
-        cv::Mat frame;
-        capture >> frame;
-        if (frame.empty()) {
-            continue;
+        cv::   简历::太框架;Mat frame;
+        capture >> frame;   捕获>>帧；
+        if (frame.empty()) {   If (frame.empty()) {
+            continue;   继续;
         }
 
-        if (testPool.put(frame) != 0)
+        if (testPool.put(frame) != 0)如果(testPool。把(帧)!= 0)
         {
-            printf("Put frame to pool failed!\n");
-            break;
+            printf("Put frame to pool failed!\n");printf（“将帧放入池失败！\n”）；printf(“把帧池失败! \ n”);printf("将帧放入池失败! \ n”);
+            break;   打破;
         }
 
     }
 }
 
-void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum)
-{
+void void display_thread（rknnPool& testPool, int threadNum）display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum)display_thread（rknnPool& testPool, int threadNum）
+    {
+    struct timeval time;   结构时间；
+    gettimeofday(&time, nullptr);gettimeofday   gettimeofday的 (&time nullptr);
+    auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;auto   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；auto   汽车 beforeTime = time.tv_sec * 1000   time.tv_usec / 1000;auto   汽车   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；
+    int frames = 0;   Int frames = 0；Int frames = 0；Int frames = 0；
 #ifdef USE_RTSP
-    int width = 1280;
-    int height = 720;
-    int fps = 60;
-
-    struct timeval time;
-    gettimeofday(&time, nullptr);
-    auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;
-    int frames = 0;
+    int width = 1280;   Int width = 1280；
+    int height = 720;   Int高度= 720；Int高度= 720；Int = 720；
+    int fps = 60;   Int FPS = 60；
 
     // FFmpeg 推流命令
     std::string cmd =
@@ -58,7 +57,7 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
 
     // 打开管道写入 FFmpeg
     FILE* ffmpeg = popen(cmd.c_str(), "w");
-    if (!ffmpeg) {
+    if   如果 (!ffmpeg) {
         std::cerr << "Failed to open ffmpeg pipe!" << std::endl;
         return;
     }
@@ -67,26 +66,26 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
     while (running)
     {
         All_result result;
-        if (testPool.get(result) == 0 && !result.img.empty())
+        if   如果 (testPool.get(result) == 0 && !result.img.empty   空())
         {
 #ifdef USE_RTSP
             // 写入管道
-            fwrite(result.img.data, 1, width * height * 3, ffmpeg);
-#else
-            cv::imshow("Camera", result.img);  // 显示帧
+            fwrite   写入文件(result.img.data   数据, 1, width * height * 3, ffmpeg);写入文件(result.img。数据，1，宽度*高度* 3，ffmpeg)；
+#else   其他#   其他#
+            cv::imshow("Camera"   “相机”, result.img);  // 显示帧
             // 每 1 毫秒检查一次键盘输入，按 q 键退出
-            char c = (char)cv::waitKey(1);
-            if (c == 'q' || c == 'Q') {
-                break;
+            char   字符 c = (char)cv::waitKey(1);char = (char)cv::waitKey(1)；
+            if   如果 (c == 'q' || c == 'Q') {   if   如果 (c == 'q' | c == 'q') {   “问”
+                break   打破;   打破;
             }
 #endif 
             // 打印识别到的结果，count是当前每一帧图的目标方框数量，result是对应是这些方框的信息
             // std::std::cout << result.result_box.count << std::endl;
             // std::std::cout << result.result_box.results << std::endl;
 
-            frames++;
-            if (frames >= 60) {
-                gettimeofday(&time, nullptr);
+            frames++;   帧;
+            if   如果 (frames >= 60) {
+                gettimeofday   gettimeofday的(&time, nullptr);gettimeofday   gettimeofday的 (&time nullptr);
                 auto currentTime = time.tv_sec * 1000 + time.tv_usec / 1000;
                 printf("60帧平均帧率: %.2f fps\n", 60.0 / float(currentTime - beforeTime) * 1000.0);
                 beforeTime = currentTime;
@@ -101,7 +100,7 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
 
 }
 
-int main(int argc, char** argv)
+int main(int argc, char** argv)Int main（Int argc, char** argv）
 {
 
     // 打印 OpenCV 版本
