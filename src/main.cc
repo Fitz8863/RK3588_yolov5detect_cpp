@@ -10,7 +10,7 @@
 #include <mutex>
 #include <atomic>
 
-// #define USE_RTSP
+#define USE_RTSP
 
 std::atomic<bool> running(true);
 
@@ -39,6 +39,11 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
     int width = 1280;
     int height = 720;
     int fps = 60;
+
+    struct timeval time;
+    gettimeofday(&time, nullptr);
+    auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;
+    int frames = 0;
 
     // FFmpeg 推流命令
     std::string cmd =
@@ -78,6 +83,15 @@ void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int thre
             // 打印识别到的结果，count是当前每一帧图的目标方框数量，result是对应是这些方框的信息
             // std::std::cout << result.result_box.count << std::endl;
             // std::std::cout << result.result_box.results << std::endl;
+
+            frames++;
+            if (frames >= 60) {
+                gettimeofday(&time, nullptr);
+                auto currentTime = time.tv_sec * 1000 + time.tv_usec / 1000;
+                printf("60帧平均帧率: %.2f fps\n", 60.0 / float(currentTime - beforeTime) * 1000.0);
+                beforeTime = currentTime;
+                frames = 0;
+            }
         }
     }
 
@@ -117,6 +131,10 @@ int main(int argc, char** argv)
             " ! image/jpeg, width=1280, height=720, framerate=60/1 ! "
             "jpegdec ! videoconvert ! appsink";
         capture.open(pipeline, cv::CAP_GSTREAMER);
+
+        // 如果没有GStreamer环境的话使用下面这个
+        capture.open(std::string(video_name));
+ 
     }
     else
     {
@@ -140,32 +158,3 @@ int main(int argc, char** argv)
     return 0;
 }
 
-
-// void display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum) {
-//     struct timeval time;
-//     gettimeofday(&time, nullptr);
-//     auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;
-//     int frames = 0;
-
-//     while (running) {
-//         All_result result;
-//         if (testPool.get(result) == 0) {
-//             std::cout << result.result_box.count << std::endl;
-//             cv::imshow("Camera FPS", result.img);
-
-//             if (cv::waitKey(1) == 'q') {
-//                 running = false;
-//                 break;
-//             }
-
-//             frames++;
-//             if (frames >= 60) {
-//                 gettimeofday(&time, nullptr);
-//                 auto currentTime = time.tv_sec * 1000 + time.tv_usec / 1000;
-//                 printf("60帧平均帧率: %.2f fps\n", 60.0 / float(currentTime - beforeTime) * 1000.0);
-//                 beforeTime = currentTime;
-//                 frames = 0;
-//             }
-//         }
-//     }
-// }
