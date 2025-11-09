@@ -1,71 +1,71 @@
 #include <stdio.h>
-#include <memory>
+#include    # include <记忆><memory>   内存> <
 #include <sys/time.h>
-#include # include“opencv2 /核心/ core.hpp”"opencv2/core/core.hpp"
-#include # include“opencv2 / highgui / highgui.hpp”"opencv2/highgui/highgui.hpp"
-#include # include“opencv2 / imgproc / imgproc.hpp”"opencv2/imgproc/imgproc.hpp"
-#include "rkYolov5s.hpp"
-#include    # include“rknnPool.hpp”"rknnPool.hpp"
+#include # include“opencv2 /核心/ core.hpp   高压泵”"opencv2/core/core.hpp"
+#include # include“opencv2 / highgui / highgui.hpp”"# include “ opencv2 / highgui / highgui.hpp    高压泵”opencv2/highgui/highgui.“opencv2 /highgui/highgui.hpp   高压泵”hpp"
+#include # include“opencv2 / imgproc / imgproc.hpp”"opencv2#include #include “opencv2/imgproc/imgproc.hpp   高压泵”/imgproc/imgproc.hpp   高压泵"   高压泵
+#include    # include“rkYolov5s.hpp”"rkYolov5s.hpp   高压泵"   高压泵
+#include    #include #include “rknnPool.hpp”# include“rknnPool.hpp”"rknnPool.hpp   高压泵"
 #include    # include <线程><thread>
-#include <mutex>   # include <互斥对象>
-#include    # include <原子><atomic>
+#include <mutex>   <互斥对象>   # include <互斥对象>
+#include    # include <原子><atomic>   原子> <
 
-#define USE_RTSP   #定义USE_RTSP
+//#define   #定义 USE_RTSP   #定义USE_RTSP#define USE_RTSP #
 
-std::std::原子< bool >运行(真正的);atomic<bool> running(true);
+std::std::原子< bool >运行(真正的);atomic   原子<bool   保龄球> running(true   真正的);
 
-void void capture_thread（cv:: videoccapture & capture, rknnPool& testPool）capture_thread(cv::VideoCapture& capture, rknnPool<rkYolov5s, cv::Mat, All_result>& testPool)
+void   无效 capture_thread(cv:: videoccapture & capture, rknnPool& testPool)capture_thread（cv:: videoccapture & capture, rknnPool& testPool）void   无效 capture_thread（cv:: videoccapture & capture, rknnPool& testPool）capture_thread(cv::VideoCapture& capture, rknnPool<rkYolov5s, cv::Mat, All_result>& testPool)
 {
-    while（运行&& capture.isOpened()）while (running && capture.isOpened())
+    while   而（运行&& capture.isOpened()）while   而 (running   运行 && capture.isOpened())
     {
         cv::   简历::太框架;Mat frame;
         capture >> frame;   捕获>>帧；
-        if (frame.empty()) {   If (frame.empty()) {
-            continue;   继续;
+        if   如果 (frame.empty   空()) {空()){if   如果 (frame.empty   空()) {   If   如果 (frame.empty   空()) {
+            continue   继续;   继续;
         }
 
-        if (testPool.put(frame) != 0)如果(testPool。把(帧)!= 0)
+        if   如果 (testPool.put   把(frame) != 0)如果(testPool。把(帧)!= 0)
         {
-            printf("Put frame to pool failed!\n");printf（“将帧放入池失败！\n”）；printf(“把帧池失败! \ n”);printf("将帧放入池失败! \ n”);
+            printf("Put frame to pool failed!“将框架放入池失败！”\n");printf（“将帧放入池失败！\n”）；printf(“把帧池失败! \ n”);printf("将帧放入池失败! \ n”);
             break;   打破;
         }
 
     }
 }
 
-void void display_thread（rknnPool& testPool, int threadNum）display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum)display_thread（rknnPool& testPool, int threadNum）
+void   无效 display_thread(rknnPool& testPool, int threadNum)display_thread（rknnPool& testPool, int threadNum）void   无效 display_thread（rknnPool& testPool, int threadNum）display_thread(rknnPool<rkYolov5s, cv::Mat, All_result>& testPool, int threadNum)display_thread（rknnPool& testPool, int threadNum）
     {
     struct timeval time;   结构时间；
     gettimeofday(&time, nullptr);gettimeofday   gettimeofday的 (&time nullptr);
-    auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;auto   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；auto   汽车 beforeTime = time.tv_sec * 1000   time.tv_usec / 1000;auto   汽车   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；
-    int frames = 0;   Int frames = 0；Int frames = 0；Int frames = 0；
+    auto beforeTime = time.tv_sec * 1000 + time.tv_usec / 1000;auto   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；auto   汽车 beforeTime = time.tv_sec * 1000   time.tv_usec / 1000;auto   汽车   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；auto   汽车 beforeTime = time.tv_sec * 1000   time.tv_usec / 1000;auto   汽车   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；auto   汽车   汽车 beforeTime = time.tv_sec * 1000   time.tv_usec / 1000;auto   汽车   汽车   汽车 beforeTime =时间。Tv_sec * 1000时间。Tv_usec / 1000；
+    int frames = 0;   Int frames = 0；Int frames = 0；Int frames = 0；Int frames = 0；Int frames = 0；
 #ifdef USE_RTSP
-    int width = 1280;   Int width = 1280；
+    int width = 1280;   Int width = 1280；Int width = 1280；Int width = 1280；
     int height = 720;   Int高度= 720；Int高度= 720；Int = 720；
-    int fps = 60;   Int FPS = 60；
+    int fps = 60;   Int FPS = 60；   Int FPS = 60；Int FPS = 60；
 
     // FFmpeg 推流命令
-    std::string cmd =
-        "ffmpeg -y "
-        "-f rawvideo -pix_fmt bgr24 -s " + std::to_string(width) + "x" + std::to_string(height) +
-        " -r " + std::to_string(fps) +
-        " -i - "
-        "-c:v h264_rkmpp -preset ultrafast -tune zerolatency "
-        "-fflags nobuffer -flags low_delay "
-        "-rtsp_transport udp "
-        "-f rtsp rtsp://10.60.90.188:8554/video";
+    std::string cmd =   Std::string CMD =
+        "ffmpeg -y "   “ffmpeg -y ”
+        "-f rawvideo -pix_fmt bgr24 -s " + std::to_string(width) + "x" + std::to_string(height) +“-f rawvideo -pix_fmt bgr24 -s ” std::to_string(width) "x"   “x” std::to_string（height）
+        " -r " + std::to_string(fps) +“ -r ” std::to_string（fps）
+        " -i - "   “我——”
+        "-c:v h264_rkmpp -preset ultrafast -tune zerolatency "“-c:v h264_rkmpp -预置超快调谐零延迟”
+        "-fflags nobuffer -flags low_delay "“ -flags nobuffer -flags low_delay ”
+        "-rtsp_transport udp "   “-rtsp_transport udp ”
+        "-f rtsp rtsp://10.60.90.188:8554/video";“-f RTSP RTSP:// 10.60.0.188:8554/video”；
 
     // 打开管道写入 FFmpeg
-    FILE* ffmpeg = popen(cmd.c_str(), "w");
+    FILE* ffmpeg = popen(cmd.c_str(), "w");FILE   文件* ffmpeg = popen(cmd.c_str(), "w"   “w”)；
     if   如果 (!ffmpeg) {
-        std::cerr << "Failed to open ffmpeg pipe!" << std::endl;
-        return;
+        std::cerr << "Failed to open ffmpeg pipe!" << std::endl;std::cerr << “打开ffmpeg管道失败！”< < std:: endl;
+        return;   返回;
     }
 #endif 
 
-    while (running)
+    while (running)   (运行时)
     {
-        All_result result;
+        All_result result;   All_result结果;
         if   如果 (testPool.get(result) == 0 && !result.img.empty   空())
         {
 #ifdef USE_RTSP
