@@ -81,6 +81,16 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(find /path/RK3588_yolov5detect_cpp/lib
 ./rknn_yolov5_demo ../model/yolov5s-640-640.rknn ../video/spiderman.mp4
 ```
 
+如果出现无法运行的情况，可能是一些依赖的问题，这边建议安装一下，下面这些依赖是我编译opencv的时候使用到的（可以正常运行的话就不用安装这些）
+```bash
+apt install -y libjpeg-dev libpng-dev libtiff-dev libwebp-dev libopenexr-dev
+apt install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libswresample-dev
+apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+apt install libv4l-dev v4l-utils
+
+apt install libgtk-3-dev
+apt install libgl1-mesa-dev libglu1-mesa-dev
+```
 
 
 ## 补充说明
