@@ -8,6 +8,8 @@
 
 Python版本：conda环境，Python 3.10.16
 
+操作系统：Ubuntu20.04 
+
 rknn-toolkit2版本：Version: 2.0.0b0+9bab5682rknn-toolkit2版本：Version: 2.0.0b0 9bab5682
 
 ```bash
@@ -18,6 +20,8 @@ pip3 show rknn-toolkit2
 ### 香橙派rk3588端
 
 Python版本：Python 3.10.12
+
+操作系统：Ubuntu20.04 （注意操作系统要是这个才行，因为我的opencv是在ubunt20.04操作系统编译的，不然链接的时候会报错）
 
 NPU版本：RKNPU driver: v0.9.6（0.9.6版本的都兼容）
 
