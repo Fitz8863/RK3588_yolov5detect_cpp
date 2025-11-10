@@ -351,9 +351,7 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
 		char *label = labels[id];
 		strncpy(group->results[last_count].name, label, OBJ_NAME_MAX_SIZE);
 
-		// printf("result %2d: (%4d, %4d, %4d, %4d), %s\n", i, group->results[last_count].box.left,
-		// group->results[last_count].box.top,
-		//        group->results[last_count].box.right, group->results[last_count].box.bottom, label);
+
 		last_count++;
 	}
 	group->count = last_count;
