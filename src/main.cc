@@ -138,7 +138,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        capture.open("../video/spiderman.mp4");
+        capture.open(std::string(video_name));
     }
 
     if (!capture.isOpened())
