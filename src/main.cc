@@ -127,6 +127,7 @@ int main(int argc, char** argv)
     cv::VideoCapture capture;
     if (std::string(video_name).find("/dev/video") == 0)
     {
+        
         std::string pipeline = "v4l2src device=" + std::string(video_name) +
             " ! image/jpeg, width=1280, height=720, framerate=60/1 ! "
             "jpegdec ! videoconvert ! appsink";
@@ -138,7 +139,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        capture.open("../video/spiderman.mp4");
+        capture.open(std::string(video_name));
     }
 
     if (!capture.isOpened())
