@@ -51,6 +51,11 @@ git clone https://github.com/Fitz8863/RK3588_yolov5detect_cpp.git
 cd RK3588_yolov5detect_cpp
 ```
 
+这里先解压lib库文件目录下opencv的库文件，因为后面编译的时候需要用到
+```bash
+tar -xzvf lib/opencv.tar.gz -C lib/
+```
+
 然后创建进入build目录
 
 ```bash
@@ -73,6 +78,8 @@ make
 
 ```bash
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(find /path/RK3588_yolov5detect_cpp/lib -type d | tr '\n' ':')
+或者
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(find ../lib -type d | tr '\n' ':')
 ```
 
 然后再执行案例（如果想使用摄像头，把../video/spiderman.mp4改成 /dev/video0 即可，根据你摄像头描述符号去改）
